@@ -24,41 +24,46 @@ bool timePassed = true; //has the timeBetweenLineRecognition passed since last l
 #define MiddleSensor 2
 #define RightSensor 1
 
-#define MOTORPOWER 80
+#define MOTORPOWER 45
 
 String space = " ";
 
 void setup() {
+  pinMode(Start, INPUT_PULLUP);
    Serial.begin(9600);
    pinMode(A2,INPUT);pinMode(A1,INPUT); //QTI pins
    pinMode(0, INPUT);pinMode(2, INPUT);pinMode(1, INPUT);//IR pins
-   Serial.println("IR Sensor Test:");
-   Serial.println("Left: D0, Middle: D2, Right: D1");
 }
 
 
 
 void loop() {
-  while (digitalRead(Start) == 0) // Button push is waited. When Button is pushed, it gives 1 value.
+  while (digitalRead(Start) == HIGH) // Button push is waited. When Button is pushed, it gives 0 value.
   {
     xmotion.UserLed2(80); // Blink User Led 2 80ms
   }
+  delay (50);
   xmotion.CounterLeds(980, 5); //4900ms timer
   while (true){
-  currentTime = millis();
-  QTICheck();
-  IRCheck();
+    currentTime = millis();
+    QTICheck();
+    IRCheck();
 //  xmotion.Forward(30,200);
 //  xmotion.Backward(MOTORPOWER,30);
 //  xmotion.Right0(MOTORPOWER,190);xmotion.Left0(MOTORPOWER,20);
 //  xmotion.StopMotors(MOTORPOWER00);
-  Serial.println(QTIvalue[0] + space + QTIvalue[1]);
-  EdgeDetected();
-  Movement(QTIvalue[0],QTIvalue[1]);
-  if (QTIvalue[0] == 0 && QTIvalue[1] == 0){
+    Serial.println(QTIvalue[0] + space + QTIvalue[1]);
+    EdgeDetected();
+    Movement(QTIvalue[0],QTIvalue[1]);
+    if(EdgeDetected())
+  {
+    delay(100);
+  } else {
+    if (QTIvalue[0] == 0 && QTIvalue[1] == 0){
     //xmotion.Forward(30,1);
     OpponentTracking(IRvalue[0], IRvalue[1], IRvalue[2]);
- }
+     }
+   }
   }
 }
 
@@ -76,39 +81,47 @@ void QTICheck(){
   }
 }
 
-//bool EdgeDetected(){
-//  if ((QTIvalue[0] == 1)||(QTIvalue[1] == 1)||(QTIvalue[2] == 1)){ 
-//    TOL = millis();
-//    xmotion.Backward(MOTORPOWER,30);
-//    return true;
-//  } else {
-//    return false;
-//  }
-//}
+bool edgeJustDetected = false;
 
-void EdgeDetected(){
+bool EdgeDetected(){
   if ((QTIvalue[0] == 1)||(QTIvalue[1] == 1)){ 
     TOL = millis();
-    xmotion.Backward(MOTORPOWER,90);
+    xmotion.Backward(MOTORPOWER,150);
+    delay(150);
+    edgeJustDetected = true;
+    return true;
+  } else {
+    edgeJustDetected = false;
+    return false;
   }
 }
+
+//void EdgeDetected(){
+//  if ((QTIvalue[0] == 1)||(QTIvalue[1] == 1)){ 
+//    TOL = millis();
+//    xmotion.Backward(MOTORPOWER,90);
+//  }
+//}
 
 
 void Movement(int left_line_sensor, int right_line_sensor){
   if (timePassed == true){
     if ((left_line_sensor == 1) && (right_line_sensor == 1)){
-      xmotion.Backward(MOTORPOWER,MOTORPOWER);xmotion.Forward(20,20);
-      xmotion.Right0(MOTORPOWER,140);xmotion.Left0(20,10); //does an approx. 180 degrees
+      xmotion.Backward(MOTORPOWER,200);
+      //xmotion.Forward(10,20);
+      delay(150);
+      xmotion.Right0(MOTORPOWER,170);xmotion.Left0(10,20); //does an approx. 180 degrees
     }
     else if ((left_line_sensor == 1) && (right_line_sensor == 0)){
-      xmotion.Right0(MOTORPOWER,170);xmotion.Left0(MOTORPOWER,20);
+      xmotion.Right0(MOTORPOWER,140);xmotion.Left0(0,0);
     }
     else if ((left_line_sensor == 0) && (right_line_sensor == 1)){
-      xmotion.Left0(MOTORPOWER,170);xmotion.Right0(MOTORPOWER,20);
+      xmotion.Left0(MOTORPOWER,140);xmotion.Right0(0,0);
     }
     else if ((left_line_sensor == 0) && (right_line_sensor == 0)){
-      xmotion.Backward(MOTORPOWER,MOTORPOWER);xmotion.Forward(MOTORPOWER,20);
-      xmotion.Right0(MOTORPOWER,140);
+      xmotion.Forward(MOTORPOWER,MOTORPOWER);
+      //xmotion.Backward(MOTORPOWER,20);
+      //xmotion.Right0(MOTORPOWER,120);
     }
     xmotion.StopMotors(1);
     timePassed = false;
@@ -125,19 +138,19 @@ void IRCheck(){
 }
 
 void OpponentTracking(int LEFT, int MIDDLE, int RIGHT){
-    if (MIDDLE == 1 ) //Middle Sensor see the opponent (0 Not Seen, 1 Seen)
+    if (MIDDLE == 0 ) //Middle Sensor see the opponent 1 Not Seen, 0 Seen)
     {
       xmotion.Forward(MOTORPOWER, 2); // Both Motors Forward %MOTORPOWER Speed, 1 Milliseconds
       LastValue = 0;
     }
-    else if (RIGHT == 1) //Right Sensor see the opponent
+    else if (RIGHT == 0) //Right Sensor see the opponent
     {
-      xmotion.Right0(70, 5); // Right Turn %70 Power 1 Milliseconds
+      xmotion.Right0(60, 1); // Right Turn %70 Power 1 Milliseconds
       LastValue = 1;
     }
-    else if (LEFT == 1) //Left Sensor see the opponent
+    else if (LEFT == 0) //Left Sensor see the opponent
     {
-      xmotion.Left0(70, 5); // Left Turn %70 Power 1 Milliseconds
+      xmotion.Left0(60, 1); // Left Turn %70 Power 1 Milliseconds
       LastValue = 2;
     }
 }
