@@ -24,7 +24,7 @@ bool timePassed = true; //has the timeBetweenLineRecognition passed since last l
 #define MiddleSensor 2
 #define RightSensor 1
 
-#define MOTORPOWER 45
+#define MOTORPOWER 35
 
 String space = " ";
 
@@ -86,8 +86,8 @@ bool edgeJustDetected = false;
 bool EdgeDetected(){
   if ((QTIvalue[0] == 1)||(QTIvalue[1] == 1)){ 
     TOL = millis();
-    xmotion.Backward(MOTORPOWER,150);
-    delay(150);
+    xmotion.Backward(MOTORPOWER,100);
+    delay(100);
     edgeJustDetected = true;
     return true;
   } else {
@@ -107,9 +107,9 @@ bool EdgeDetected(){
 void Movement(int left_line_sensor, int right_line_sensor){
   if (timePassed == true){
     if ((left_line_sensor == 1) && (right_line_sensor == 1)){
-      xmotion.Backward(MOTORPOWER,200);
+      xmotion.Backward(MOTORPOWER,150);
       //xmotion.Forward(10,20);
-      delay(150);
+      delay(100);
       xmotion.Right0(MOTORPOWER,170);xmotion.Left0(10,20); //does an approx. 180 degrees
     }
     else if ((left_line_sensor == 1) && (right_line_sensor == 0)){
