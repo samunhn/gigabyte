@@ -5,7 +5,7 @@ int Start = 10;
 int QTI[] = {A2, A1};
 int QTIvalue[] = {0, 0}; //0 = black, 1 = white
 
-#define lineThreshhold 150
+#define lineThreshhold 100
 
 int IR[] = {0, 1};
 int IRvalue[] = {0, 0}; //might be 00001 or MOTORPOWER00 since the robots start next to each other
@@ -27,8 +27,8 @@ bool edgeJustDetected = false;
 
 #define MOTORPOWER 100
 #define TURNPOWER 70
-#define COUPON 0.40
-#define CHARGE 30
+#define COUPON 0.35
+#define CHARGE 50
 
 String space = " ";
 
@@ -142,12 +142,12 @@ void IRCheck(){
 void OpponentTracking(int MIDDLE, int RIGHT){
     if (MIDDLE == 0 ) //Middle Sensor see the opponent 1 Not Seen, 0 Seen)
     {
-      xmotion.Forward(MOTORPOWER+CHARGE, 100); // Both Motors Forward %MOTORPOWER Speed, 0.1 second
+      xmotion.Forward(MOTORPOWER, 105); // Both Motors Forward %MOTORPOWER Speed, 0.1 second
       LastValue = 0;
     }
     else if (RIGHT == 0) //Right Sensor see the opponent
     {
-      xmotion.Right0(TURNPOWER, 110); // Right Turn %70 Power 0.1 second
+      xmotion.Right0(TURNPOWER, 90); // Right Turn %70 Power 0.1 second
       LastValue = 1;
     }
     //else if (LEFT == 0) //Left Sensor see the opponent
