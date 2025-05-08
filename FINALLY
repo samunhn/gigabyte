@@ -27,7 +27,7 @@ bool edgeJustDetected = false;
 
 #define MOTORPOWER 100
 #define TURNPOWER 70
-#define COUPON 0.5
+#define COUPON 0.40
 #define CHARGE 30
 
 String space = " ";
@@ -147,7 +147,7 @@ void OpponentTracking(int MIDDLE, int RIGHT){
     }
     else if (RIGHT == 0) //Right Sensor see the opponent
     {
-      xmotion.Right0(TURNPOWER, 110); // Right Turn %70 Power 1.1 seconds
+      xmotion.Right0(TURNPOWER, 110); // Right Turn %70 Power 0.1 second
       LastValue = 1;
     }
     //else if (LEFT == 0) //Left Sensor see the opponent
